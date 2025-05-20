@@ -13,7 +13,7 @@ A web-based tool that analyzes **C programs** and estimates their **time and spa
 
 - **Language:** C
 - **Parser:** Regular Expressions
-- **Frontend/Web Tool:** (You can mention if you used HTML/CSS/JS or any framework — add if applicable)
+- **Frontend/Web Tool:** HTML, CSS and JavaScript
 
 
 
