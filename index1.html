@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Complexity Calculator</title>
+  <style>
+    body {
+      font-family: 'Roboto Mono', monospace;
+      background-image: url('https://source.unsplash.com/1600x900/?coding,technology'); 
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      color: #2c3e50; 
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      animation: fadeIn 1.5s ease-in-out;
+    }
+
+    h1 {
+      font-size: 3.5em;
+      margin-bottom: 20px;
+      color: #ecf0f1; 
+      text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.4);
+      letter-spacing: 2px;
+      animation: slideIn 1.2s ease-in-out;
+    }
+
+    #program {
+      width: 70%;
+      height: 150px;
+      margin-bottom: 20px;
+      padding: 20px;
+      border: none;
+      border-radius: 12px;
+      background-color: rgba(236, 240, 241, 0.85);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      font-size: 1.2rem;
+      resize: vertical;
+      transition: transform 0.3s;
+      color: #2c3e50;
+    }
+
+    #program:hover {
+      transform: scale(1.02);
+    }
+
+    #calculateButton {
+      background-color: #3498db; 
+      color: white;
+      padding: 15px 25px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s;
+      font-size: 1.1rem;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    #calculateButton:hover {
+      background-color: #2980b9;
+      transform: translateY(-3px);
+    }
+
+    #result {
+      margin-top: 25px;
+      background-color: rgba(255, 255, 255, 0.95); 
+      padding: 25px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      width: 70%;
+      font-size: 1.2rem;
+      color: #34495e; 
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    #result strong {
+      color: #e74c3c;
+      font-weight: bold;
+      font-size: 1.3rem;
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    @keyframes slideIn {
+      0% { transform: translateY(-30px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Complexity Calculator</h1>
+  <textarea id="program" placeholder="Paste your code here"></textarea><br>
+  <button id="calculateButton">Calculate Complexity</button>
+  <div id="result"></div>
+
+  <script>
+    const programTextArea = document.getElementById("program");
+    const calculateButton = document.getElementById("calculateButton");
+    const resultDisplay = document.getElementById("result");
+
+    calculateButton.addEventListener("click", calculateComplexity);
+
+    function calculateComplexity() {
+      const program = programTextArea.value;
+      try {
+        const code = removeCommentsAndStrings(program); 
+        const exponentialComplexity = calculateExponentialTimeComplexity(code);
+        const timeComplexity = calculateProgramTimeComplexity(code);
+        const isLogarithmic = detectLogarithmicComplexity(code);
+        const rec = calculateRecursiveTimeComplexity(code);
+        let timeOutput;
+
+        if (exponentialComplexity !== 'Not Exponential') {
+          timeOutput = exponentialComplexity;
+        } else {
+          if (isLogarithmic) {
+            timeOutput = "O(log n)";
+          } else {
+            timeOutput = timeComplexity;
+          }
+        }
+
+        const spaceOutput = calculateSpaceComplexity(code); 
+
+        resultDisplay.innerHTML = `
+          <p><strong>Time Complexity:</strong> ${timeOutput}</p>
+          <p><strong>Space Complexity:</strong> ${spaceOutput}</p>
+        `;
+      } catch (error) {
+        console.error("Error calculating complexity:", error);
+        resultDisplay.innerText = "Error calculating complexity.";
+      }
+    }
+
+    function removeCommentsAndStrings(code) {
+      code = code.replace(/\/\/.*?\n/g, ''); 
+      code = code.replace(/\/\*[\s\S]*?\*\//g, '');
+      code = code.replace(/(['"`])(\\.|[^\\])*?\1/g, ''); 
+      return code;
+    }
+
+    function calculateExponentialTimeComplexity(code) {
+      const lines = code.split('\n');
+      const recursiveFunctions = {};
+
+      lines.forEach(line => {
+        line = line.trim();
+        const functionDefinition = /^(int|void|bool)\s+(\w+)\s*\(/.exec(line);
+        if (functionDefinition) {
+          const funcName = functionDefinition[2];
+          recursiveFunctions[funcName] = 0;
+        }
+
+        Object.keys(recursiveFunctions).forEach(funcName => {
+          const recursiveCallPattern = new RegExp(`\\b${funcName}\\s*\\(`);
+          if (recursiveCallPattern.test(line)) {
+            recursiveFunctions[funcName]++;
+          }
+        });
+      });
+
+      for (const funcName in recursiveFunctions) {
+        if (recursiveFunctions[funcName] > 1) {
+          return 'O(2^n)'; 
+        }
+      }
+
+      return 'Not Exponential'; 
+    }
+
+    function calculateProgramTimeComplexity(program) { 
+      const lines = program.trim().split("\n");
+      let totalComplexity = "O(1)";
+      let currentNestedDepth = 0;
+      let maxNestedLoopDepth = 0;
+      let totalLadderComplexity = 0;
+      let inLadderLoop = false;
+
+      lines.forEach((line) => {
+        const depth = getLoopDepth(line);
+        if (depth > 0) {
+          if (!inLadderLoop) {
+            totalLadderComplexity += 1;
+            inLadderLoop = true;
+          }
+          currentNestedDepth += depth;
+          maxNestedLoopDepth = Math.max(maxNestedLoopDepth, currentNestedDepth);
+        }
+        if (line.includes("}")) {
+          currentNestedDepth = Math.max(0, currentNestedDepth - 1);
+          if (currentNestedDepth === 0) {
+            inLadderLoop = false;
+          }
+        }
+        if (line.includes("do") || line.includes("while")) {
+          totalLadderComplexity += 1; 
+        }
+      });
+
+      if (maxNestedLoopDepth > 0) {
+        totalComplexity = `O(n^${maxNestedLoopDepth})`;
+      } else if (totalLadderComplexity > 0) {
+        totalComplexity = `O(n * ${totalLadderComplexity})`; 
+      }
+
+      return totalComplexity;
+    }
+
+    function getLoopDepth(line) {
+      const loopKeywords = ['for', 'while', 'do'];
+      return loopKeywords.reduce((depth, keyword) => {
+        return depth + (line.includes(keyword) ? 1 : 0);
+      }, 0);
+    }
+
+    function detectLogarithmicComplexity(program) { 
+      const shiftRightPattern = /\w+\s*>>=\s*[1-9][0-9]*/;
+      const shiftLeftPattern = /\w+\s*<<=\s*[1-9][0-9]*/;
+      const divisionPattern = /\w+\s*\/=\s*[1-9][0-9]*/;
+      const multiplicationPattern = /\w+\s*\*=\s*[1-9][0-9]*/;
+      const forLoopPattern = /for\s*\(\s*\w+\s*=\s*1;\s*\w+\s*<\s*\w+;\s*\w+\s*\*=\s*2\s*\)/;
+      const whileLoopPattern = /while\s*\(\s*\w+\s*>\s*0;\s*\w+\s*\/=\s*[1-9][0-9]*\s*\)/;
+      const doWhileLoopPattern = /do\s*\{\s*[^}]*\s*}\s*while\s*\(\s*\w+\s*>\s*0;\s*\w+\s*\/=\s*[1-9][0-9]*\s*\)/;
+      const logarithmicForLoopPattern = /for\s*\(\s*\w+\s*=\s*1;\s*\w+\s*<\s*\w+;\s*\w+\s*\+=\s*\w+\/[1-9][0-9]*\s*\)/;
+      const logarithmicWhileLoopPattern = /while\s*\(\s*\w+\s*>\s*0;\s*\w+\s*=\s*\w+\/[1-9][0-9]*\s*\)/;
+      const binarySearchPattern = /.*(binary\s*search|search\s*in\s*sorted\s*array).*/i;
+      const logarithmicRecursionPattern = /function\s+\w+\s*\(\w+\)\s*{\s*if\s*\(\w+\s*<\s*[1-9][0-9]*\)\s*return\s+\w+;\s*\w+\s*=\s*\w+\/[1-9][0-9]*;/;
+      const logarithmicInFunctionPattern = /function\s+\w+\s*\(\w+\)\s*{\s*return\s+\w+\s*\/\s*[1-9][0-9]*\s*;\s*}/;
+      const logBaseChangePattern = /log\s*\(\w+,\s*\w+\)/;
+      const nestedLogPattern = /for\s*\(\s*\w+\s*=\\s*0;\s*\w+\s*<\s*\w+;\s*\w+\s*\+\+\s*\)\s*for\s*\(\s*\w+\s*=\s*0;\s*\w+\s*<\s*\w+;\s*\w+\s*=\s*\w+\/[1-9][0-9]*\s*\)/;
+      const arrayTraversalPattern = /for\s*\(\s*\w+\s*=\s*0;\s*\w+\s*<\s*\w+;\s*\w+\s*\*=\s*2\s*\)/;
+      const logarithmicSortPattern = /.*(merge\s*sort|quick\s*sort|heap\s*sort).*/i;
+      const customDivisionIncrementPattern = /\w+\s*\+=\s*\w+\s*\/\s*[1-9]/;
+
+      return (
+        shiftRightPattern.test(program) ||
+        shiftLeftPattern.test(program) ||
+        divisionPattern.test(program) ||
+        multiplicationPattern.test(program) ||
+        forLoopPattern.test(program) ||
+        whileLoopPattern.test(program) ||
+        doWhileLoopPattern.test(program) ||
+        logarithmicForLoopPattern.test(program) ||
+        logarithmicWhileLoopPattern.test(program) ||
+        binarySearchPattern.test(program) ||
+        logarithmicRecursionPattern.test(program) ||
+        logarithmicInFunctionPattern.test(program) ||
+        logBaseChangePattern.test(program) ||
+        nestedLogPattern.test(program) ||
+        arrayTraversalPattern.test(program) ||
+        logarithmicSortPattern.test(program) ||
+        customDivisionIncrementPattern.test(program)
+      );
+    }
+
+    function calculateRecursiveTimeComplexity(program) {
+      const functionNamePattern = /function\s+(\w+)\s*\(/;
+      const functionBodyPattern = /{([^]*)}/;
+      const functionCallsPattern = /(\w+)\s*\(/g;
+
+      const functions = {};
+      const functionCalls = {};
+      const lines = program.split('\n');
+
+      lines.forEach(line => {
+        const functionMatch = functionNamePattern.exec(line);
+        if (functionMatch) {
+          const functionName = functionMatch[1];
+          functions[functionName] = {
+            body: null,
+            calls: []
+          };
+        }
+      });
+
+      lines.forEach(line => {
+        const functionMatch = functionNamePattern.exec(line);
+        const bodyMatch = functionBodyPattern.exec(line);
+        if (functionMatch && bodyMatch) {
+          const functionName = functionMatch[1];
+          functions[functionName].body = bodyMatch[1];
+        }
+      });
+
+      Object.keys(functions).forEach(functionName => {
+        const body = functions[functionName].body;
+        if (body) {
+          const calls = [];
+          let callMatch;
+          while ((callMatch = functionCallsPattern.exec(body)) !== null) {
+            calls.push(callMatch[1]);
+          }
+          functionCalls[functionName] = calls;
+        }
+      });
+
+      let totalComplexity = "O(1)";
+      for (const func in functionCalls) {
+        if (functionCalls[func].length > 0) {
+          totalComplexity = "O(n)"; 
+        }
+      }
+
+      return totalComplexity;
+    }
+
+    function calculateSpaceComplexity(code) { 
+      const recursionDepth = checkRecursionDepth(code);
+      let spaceComplexity = "O(1)";
+
+      if (recursionDepth > 0) {
+        spaceComplexity = `O(n)`; 
+      }
+
+      const dynamicArrayPattern = /\b(int|float|char|double|long)\s+\w+\s*\[\s*n\s*\]/g;
+      const multiDimDynamicArrayPattern = /\b(int|float|char|double|long)\s+\w+\s*(\[\s*n\s*\]){2,}/g;
+      const mallocPattern = /\b(malloc|calloc|realloc)\s*\(.*?\)/g;
+      const multiDimMallocPattern = /\b(malloc|calloc)\s*\(\s*sizeof\s*\(\s*(int|float|char|double|long)\s*\*+\s*\(\s*n\s*\)\s*\*\s*n\s*\)/g;
+
+      const multiDimDynamicArrayMatches = code.match(multiDimDynamicArrayPattern);
+      if (multiDimDynamicArrayMatches) {
+        const dimensionCount = multiDimDynamicArrayMatches[0].match(/\[\s*n\s*\]/g).length;
+        return `O(n^${dimensionCount})`;
+      }
+
+      const dynamicArrayMatches = code.match(dynamicArrayPattern);
+      if (dynamicArrayMatches) {
+        return "O(n)"; 
+      }
+
+      if (multiDimMallocPattern.test(code)) {
+        const dimensionCount = (code.match(/n/g) || []).length;
+        return `O(n^${dimensionCount})`; 
+      }
+
+      if (mallocPattern.test(code)) {
+        return "O(n)"; 
+      }
+
+      return spaceComplexity;
+    }
+
+    function checkRecursionDepth(code) {
+      const functionPattern = /\b(?:void|int|float|double|char|bool)\s+\w+\s*\(.*?\)\s*{/g;
+      const functions = code.match(functionPattern) || [];
+      let recursionCount = 0;
+
+      functions.forEach(func => {
+        const functionName = func.split(' ')[1].split('(')[0];
+        const regex = new RegExp(`\\b${functionName}\\s*\\(`, 'g');
+        const matches = code.match(regex);
+        if (matches && matches.length > 1) {
+          recursionCount++;
+        }
+      });
+
+      return recursionCount;
+    }
+  </script>
+</body>
+</html>
+setup /download configuration.xml

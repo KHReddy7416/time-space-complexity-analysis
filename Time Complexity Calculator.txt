@@ -1,0 +1,166 @@
+Time Complexity Calculator
+#include <stdio.h>
+
+int largestPowerOfTwo(int n) {
+    int power = 1;
+    while (power <= n) {
+        power <<= 1; // Multiply by 2
+    }
+    return power >> 1; // Return the largest power of 2 less than n
+}
+
+ Calculate Time Complexity
+Time Complexity: O(log n)
+
+
+#include <stdio.h>
+
+void printPowersOfTwo(int n) {
+    for (int i = 1; i <= n; i *= 2) {
+        printf("%d ", i);
+    }
+}
+
+#include <stdio.h>
+
+void printTriples(int arr[], int size) {
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            for (int k = 0; k < size; k++) {
+                printf("(%d, %d, %d) ", arr[i], arr[j], arr[k]);
+            }
+        }
+    }
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {1, 2};
+    printTriples(arr, 2); // O(n³)
+    return 0;
+}
+
+#include <stdio.h>
+
+void printPairs(int arr[], int size) {
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            printf("(%d, %d) ", arr[i], arr[j]);
+        }
+    }
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {1, 2, 3};
+    printPairs(arr, 3); // O(n²)
+    return 0;
+}
+
+#include <stdio.h>
+
+void printAllElements(int arr[], int size) {
+    for (int i = 0; i < size; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5};
+    printAllElements(arr, 5); // O(n)
+    return 0;
+}
+
+#include <stdio.h>
+
+void printFirstElement(int arr[], int size) {
+    if (size > 0) {
+        printf("First element: %d\n", arr[0]);
+    }
+}
+
+int main() {
+    int arr[] = {5, 10, 15, 20};
+    printFirstElement(arr, 4); // O(1)
+    return 0;
+}
+
+#include <stdio.h>
+
+int countBits(int n) {
+    int count = 0;
+    while (n) {
+        count++;
+        n >>= 1;
+    }
+    return count;
+}
+It should now display O(log n) correctly
+
+Exponential time Complexity:-
+
+int fibonacci(int n) {
+    if (n <= 1) return n;
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+int combination(int n, int k) {
+    if (k == 0 || k == n) return 1;
+    return combination(n - 1, k - 1) + combination(n - 1, k);
+}
+
+void towerOfHanoi(int n, char from_rod, char to_rod, char aux_rod) {
+    if (n == 1) {
+        return;
+    }
+    towerOfHanoi(n - 1, from_rod, aux_rod, to_rod);
+    towerOfHanoi(n - 1, aux_rod, to_rod, from_rod);
+}
+
+bool isSubsetSum(int set[], int n, int sum) {
+    if (sum == 0) return true;
+    if (n == 0) return false;
+
+    if (set[n - 1] > sum) {
+        return isSubsetSum(set, n - 1, sum);
+    }
+
+    return isSubsetSum(set, n - 1, sum) || isSubsetSum(set, n - 1, sum - set[n - 1]);
+}
+
+void generatePowerSet(int set[], int n, int index, int *subset, int subsetSize) {
+    if (index == n) {
+        // Print the current subset
+        for (int i = 0; i < subsetSize; i++) {
+            printf("%d ", subset[i]);
+        }
+        printf("\n");
+        return;
+    }
+
+    // Exclude the current element
+    generatePowerSet(set, n, index + 1, subset, subsetSize);
+
+    // Include the current element
+    subset[subsetSize] = set[index];
+    generatePowerSet(set, n, index + 1, subset, subsetSize + 1);
+}
+
+int countBinaryStrings(int n) {
+    if (n == 0) return 1;
+    if (n == 1) return 2;
+    return countBinaryStrings(n - 1) + countBinaryStrings(n - 2);
+}
+
+int catalan(int n) {
+    if (n <= 1) return 1;
+    int result = 0;
+    for (int i = 0; i < n; i++) {
+        result += catalan(i) * catalan(n - i - 1);
+    }
+    return result;
+}
+
+
+

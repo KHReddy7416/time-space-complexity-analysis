@@ -1,0 +1,97 @@
+Valgrind is a powerful tool for memory debugging and profiling in C and C++ programs, but it does not directly measure the total size of a program. However, you can use it to monitor memory usage and detect memory leaks. To find the total size of a program, including the memory allocated dynamically at runtime, you typically combine Valgrind with additional commands. Below are the steps to do this.
+
+### Step-by-Step Instructions
+
+1. **Install Valgrind**: If you haven't installed Valgrind yet, you can do so using your package manager. For example:
+   - On Ubuntu:
+     ```bash
+     sudo apt-get install valgrind
+     ```
+
+2. **Compile Your C Program**: Ensure you compile your C program with debugging symbols enabled. Use the `-g` flag with `gcc`:
+   ```bash
+   gcc -g -o my_program my_program.c
+   ```
+
+3. **Run Your Program with Valgrind**: Execute your program under Valgrind to collect memory usage information:
+   ```bash
+   valgrind --tool=memcheck --leak-check=full --track-origins=yes ./my_program
+   ```
+
+4. **Check Memory Usage**: After running the program, Valgrind will output information about memory usage. You should see:
+   - Total heap memory allocated.
+   - Any memory leaks (if applicable).
+
+5. **Total Size Calculation**: The total size of your program can be understood as:
+   - **Static size**: The size of the binary executable (`my_program`).
+   - **Dynamic size**: The heap memory usage reported by Valgrind.
+
+### Example C Program
+
+Here's a simple C program that allocates memory dynamically:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    int *arr = malloc(10 * sizeof(int));  // Allocate memory for 10 integers
+    if (arr == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+    
+    // Use the allocated memory
+    for (int i = 0; i < 10; i++) {
+        arr[i] = i;
+    }
+
+    // Print the allocated memory
+    for (int i = 0; i < 10; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    free(arr);  // Free the allocated memory
+    return 0;
+}
+```
+
+### Running Valgrind with the Example
+
+1. Compile the program:
+   ```bash
+   gcc -g -o my_program my_program.c
+   ```
+
+2. Run Valgrind:
+   ```bash
+   valgrind --tool=memcheck --leak-check=full --track-origins=yes ./my_program
+   ```
+
+### Expected Valgrind Output
+
+After running the program, you might see output similar to:
+
+```
+==12345== Memcheck, a memory error detector
+==12345== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==12345== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==12345== Command: ./my_program
+==12345==
+0 1 2 3 4 5 6 7 8 9 
+==12345==
+==12345== HEAP SUMMARY:
+==12345==     in use at exit: 0 bytes in 0 blocks
+==12345==   total heap usage: 1 allocs, 1 frees, 40 bytes allocated
+==12345==
+==12345== All heap blocks were freed -- no leaks are possible
+```
+
+### Interpreting the Output
+
+- The `total heap usage` section will show how much memory was allocated during the execution of the program. You can sum this with the size of your executable to get an overall estimate of memory usage.
+
+### Conclusion
+
+To find the total size of a program using Valgrind, you mainly need to focus on the heap memory usage and combine it with the size of the compiled binary. For specific analyses or monitoring, consider using other Valgrind tools like `massif` for heap profiling.

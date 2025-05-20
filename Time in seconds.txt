@@ -1,0 +1,446 @@
+Here are 20 different C code examples that can be used to test the provided code runner:
+
+### 1. Basic "Hello, World!"
+```c
+#include <stdio.h>
+int main() {
+    printf("Hello, World!\n");
+    return 0;
+}
+```
+
+### 2. Integer Addition
+```c
+#include <stdio.h>
+int main() {
+    int a = 5, b = 10;
+    printf("Sum: %d\n", a + b);
+    return 0;
+}
+```
+
+### 3. Factorial using Recursion
+```c
+#include <stdio.h>
+int factorial(int n) {
+    if (n == 0) return 1;
+    else return n * factorial(n - 1);
+}
+int main() {
+    int num = 5;
+    printf("Factorial of %d is %d\n", num, factorial(num));
+    return 0;
+}
+```
+
+### 4. Array Sum
+```c
+#include <stdio.h>
+int main() {
+    int arr[] = {1, 2, 3, 4, 5};
+    int sum = 0;
+    for (int i = 0; i < 5; i++) {
+        sum += arr[i];
+    }
+    printf("Sum of array: %d\n", sum);
+    return 0;
+}
+```
+
+### 5. Swap Two Numbers
+```c
+#include <stdio.h>
+int main() {
+    int a = 10, b = 20, temp;
+    temp = a;
+    a = b;
+    b = temp;
+    printf("After swapping: a = %d, b = %d\n", a, b);
+    return 0;
+}
+```
+
+### 6. Fibonacci Series
+```c
+#include <stdio.h>
+int main() {
+    int n = 10, t1 = 0, t2 = 1, nextTerm;
+    for (int i = 1; i <= n; ++i) {
+        printf("%d, ", t1);
+        nextTerm = t1 + t2;
+        t1 = t2;
+        t2 = nextTerm;
+    }
+    return 0;
+}
+```
+
+### 7. Reverse a String
+```c
+#include <stdio.h>
+#include <string.h>
+int main() {
+    char str[] = "hello";
+    int len = strlen(str);
+    for (int i = len - 1; i >= 0; i--) {
+        printf("%c", str[i]);
+    }
+    printf("\n");
+    return 0;
+}
+```
+
+### 8. Simple Calculator
+```c
+#include <stdio.h>
+int main() {
+    int a = 10, b = 5;
+    printf("Addition: %d\n", a + b);
+    printf("Subtraction: %d\n", a - b);
+    printf("Multiplication: %d\n", a * b);
+    printf("Division: %d\n", a / b);
+    return 0;
+}
+```
+
+### 9. Prime Number Check
+```c
+#include <stdio.h>
+int main() {
+    int n = 29, flag = 1;
+    for (int i = 2; i <= n / 2; i++) {
+        if (n % i == 0) {
+            flag = 0;
+            break;
+        }
+    }
+    if (flag == 1) printf("%d is a prime number.\n", n);
+    else printf("%d is not a prime number.\n", n);
+    return 0;
+}
+```
+
+### 10. Find Largest Number in Array
+```c
+#include <stdio.h>
+int main() {
+    int arr[] = {1, 3, 7, 9, 2};
+    int max = arr[0];
+    for (int i = 1; i < 5; i++) {
+        if (arr[i] > max) max = arr[i];
+    }
+    printf("Largest number: %d\n", max);
+    return 0;
+}
+```
+
+### 11. Bubble Sort
+```c
+#include <stdio.h>
+void bubbleSort(int arr[], int n) {
+    for (int i = 0; i < n-1; i++) {
+        for (int j = 0; j < n-i-1; j++) {
+            if (arr[j] > arr[j+1]) {
+                int temp = arr[j];
+                arr[j] = arr[j+1];
+                arr[j+1] = temp;
+            }
+        }
+    }
+}
+int main() {
+    int arr[] = {64, 34, 25, 12, 22, 11, 90};
+    int n = sizeof(arr)/sizeof(arr[0]);
+    bubbleSort(arr, n);
+    printf("Sorted array: ");
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+    return 0;
+}
+```
+
+### 12. Palindrome Check
+```c
+#include <stdio.h>
+#include <string.h>
+int main() {
+    char str[] = "radar";
+    int len = strlen(str), flag = 1;
+    for (int i = 0; i < len / 2; i++) {
+        if (str[i] != str[len - i - 1]) {
+            flag = 0;
+            break;
+        }
+    }
+    if (flag) printf("Palindrome\n");
+    else printf("Not a Palindrome\n");
+    return 0;
+}
+```
+
+### 13. Count Number of Vowels
+```c
+#include <stdio.h>
+int main() {
+    char str[] = "hello world";
+    int vowels = 0;
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (str[i] == 'a' || str[i] == 'e' || str[i] == 'i' || str[i] == 'o' || str[i] == 'u') {
+            vowels++;
+        }
+    }
+    printf("Number of vowels: %d\n", vowels);
+    return 0;
+}
+```
+
+### 14. Matrix Multiplication
+```c
+#include <stdio.h>
+int main() {
+    int a[2][2] = {{1, 2}, {3, 4}};
+    int b[2][2] = {{5, 6}, {7, 8}};
+    int c[2][2] = {0};
+
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 2; j++) {
+            for (int k = 0; k < 2; k++) {
+                c[i][j] += a[i][k] * b[k][j];
+            }
+        }
+    }
+
+    printf("Result matrix:\n");
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 2; j++) {
+            printf("%d ", c[i][j]);
+        }
+        printf("\n");
+    }
+    return 0;
+}
+```
+
+### 15. Counting Digits in a Number
+```c
+#include <stdio.h>
+int main() {
+    int num = 12345, count = 0;
+    while (num != 0) {
+        num /= 10;
+        count++;
+    }
+    printf("Number of digits: %d\n", count);
+    return 0;
+}
+```
+
+### 16. Calculate Power of a Number
+```c
+#include <stdio.h>
+int power(int base, int exp) {
+    if (exp == 0) return 1;
+    return base * power(base, exp - 1);
+}
+int main() {
+    int base = 2, exp = 3;
+    printf("%d^%d = %d\n", base, exp, power(base, exp));
+    return 0;
+}
+```
+
+### 17. GCD of Two Numbers
+```c
+#include <stdio.h>
+int gcd(int a, int b) {
+    if (b == 0) return a;
+    return gcd(b, a % b);
+}
+int main() {
+    int a = 56, b = 98;
+    printf("GCD of %d and %d is %d\n", a, b, gcd(a, b));
+    return 0;
+}
+```
+
+### 18. ASCII Value of a Character
+```c
+#include <stdio.h>
+int main() {
+    char ch = 'A';
+    printf("ASCII value of %c is %d\n", ch, ch);
+    return 0;
+}
+```
+
+### 19. Reverse an Integer
+```c
+#include <stdio.h>
+int main() {
+    int num = 12345, reversed = 0;
+    while (num != 0) {
+        reversed = reversed * 10 + num % 10;
+        num /= 10;
+    }
+    printf("Reversed number: %d\n", reversed);
+    return 0;
+}
+```
+
+### 20. Count Occurrences of a Character in a String
+```c
+#include <stdio.h>
+#include <string.h>
+int main() {
+    char str[] = "hello world";
+    char ch = 'l';
+    int count = 0;
+    for (int i = 0; i < strlen(str); i++) {
+        if (str[i] == ch) count++;
+    }
+    printf("Character '%c' occurs %d times\n", ch, count);
+    return 0
+
+;
+}
+```
+Here are updated versions of the C examples, where the input is taken from the user in each case:
+
+### Example 1: Simple Hello World Program with User Input
+This modified version asks the user for their name and then prints a greeting.
+
+```c
+#include <stdio.h>
+
+int main() {
+    char name[50];
+    printf("Enter your name: ");
+    scanf("%s", name);
+    printf("Hello, %s!\n", name);
+    return 0;
+}
+```
+
+### Example 2: Factorial Calculation (Recursion) with User Input
+This version takes the number as input from the user to compute the factorial.
+
+```c
+#include <stdio.h>
+
+int factorial(int n) {
+    if (n == 0) return 1;
+    return n * factorial(n - 1);
+}
+
+int main() {
+    int number;
+    printf("Enter a number to find its factorial: ");
+    scanf("%d", &number);
+    printf("Factorial of %d is %d\n", number, factorial(number));
+    return 0;
+}
+```
+
+### Example 3: Memory Allocation and Deallocation with User Input
+This version allows the user to input the size of the array to be dynamically allocated.
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    int *arr;
+    int n;
+
+    printf("Enter the number of elements: ");
+    scanf("%d", &n);
+
+    // Dynamically allocate memory using malloc
+    arr = (int*)malloc(n * sizeof(int));
+
+    if (arr == NULL) {
+        printf("Memory not allocated.\n");
+        return 1;
+    }
+
+    // Get array elements from the user
+    printf("Enter %d integers:\n", n);
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);
+    }
+
+    // Print values
+    printf("You entered: ");
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    // Free the allocated memory
+    free(arr);
+
+    return 0;
+}
+```
+
+### Example 4: Fibonacci Sequence (Loop) with User Input
+This version asks the user for the number of terms in the Fibonacci sequence they want to generate.
+
+```c
+#include <stdio.h>
+
+void print_fibonacci(int n) {
+    int t1 = 0, t2 = 1, nextTerm;
+
+    printf("Fibonacci Series: %d, %d", t1, t2);
+
+    for (int i = 3; i <= n; ++i) {
+        nextTerm = t1 + t2;
+        printf(", %d", nextTerm);
+        t1 = t2;
+        t2 = nextTerm;
+    }
+    printf("\n");
+}
+
+int main() {
+    int n;
+    printf("Enter the number of terms for the Fibonacci sequence: ");
+    scanf("%d", &n);
+    print_fibonacci(n);
+    return 0;
+}
+```
+
+### Example 5: Sum of Array Elements with User Input
+In this version, the user provides the size of the array and its elements, and the program calculates the sum.
+
+```c
+#include <stdio.h>
+
+int main() {
+    int n, sum = 0;
+
+    printf("Enter the number of elements: ");
+    scanf("%d", &n);
+
+    int arr[n];
+    
+    printf("Enter %d integers:\n", n);
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);
+    }
+
+    for (int i = 0; i < n; i++) {
+        sum += arr[i];
+    }
+
+    printf("Sum of array elements: %d\n", sum);
+    return 0;
+}
+```
+
+These examples now include user input functionality to make them interactive and more dynamic for testing purposes.
+These examples should cover a wide range of basic C functionality, such as loops, arrays, recursion, string manipulation, sorting, and mathematical operations. You can input any of these examples to test the code runner program.
